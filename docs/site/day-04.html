@@ -5,94 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Day 04｜前端基础 2</title>
   <style>
-    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; margin: 0; background:#0b1020; color:#e8ecf3; }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    .nav { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; background:#121a30; padding:16px; border-radius:14px; }
-    .card { background:#121a30; border-radius:16px; padding:20px; margin-bottom:18px; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; margin: 0; background: linear-gradient(180deg,#0b1020,#111931); color:#e8ecf3; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 24px; }
+    .nav { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; background:rgba(18,26,48,.88); padding:16px 18px; border-radius:16px; backdrop-filter: blur(10px); }
+    .nav a { color:#cfe4ff; text-decoration:none; font-weight:600; }
+    .nav a:hover { color:#8cc8ff; }
+    .hero { background: linear-gradient(135deg,#162445,#1c3d73); border-radius:22px; padding:28px; margin-bottom:22px; box-shadow:0 10px 30px rgba(0,0,0,.22); }
+    .card { background:#121a30; border-radius:18px; padding:20px; margin-bottom:18px; box-shadow:0 8px 24px rgba(0,0,0,.18); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
     a { color:#8cc8ff; text-decoration:none; }
     a:hover { text-decoration:underline; }
     .muted { color:#9aacbf; }
     .badge { display:inline-block; padding:4px 10px; border-radius:999px; background:#243556; color:#cfe4ff; font-size:12px; }
-    .content { line-height:1.75; }
+    .tabs { display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+    .tab-btn { border:none; border-radius:999px; background:#243556; color:#d8e8ff; padding:10px 16px; cursor:pointer; font-weight:600; }
+    .tab-btn.active { background:#4f8dff; color:white; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+    .anki-card { background:linear-gradient(180deg,#17233f,#121a30); border:1px solid #2b426b; border-radius:18px; padding:18px; min-height:180px; }
+    .anki-front { font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }
+    .anki-back { color:#cfe0f7; line-height:1.7; white-space:pre-line; }
+    .speak-item { border-left:3px solid #4f8dff; padding-left:14px; margin-bottom:16px; }
+    .section-title { margin-top:0; }
+    .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
   </style>
+  <script>
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      btn.classList.add('active');
+    }
+  </script>
 </head>
 <body>
   <div class="wrap">
     <div class="nav">
       <a href="./index.html">首页</a>
       <a href="./days.html">30天计划</a>
+      <a href="../README.md">仓库说明</a>
     </div>
     
-        <div class="card">
-          <span class="badge">Day 04</span>
-          <h1>前端基础 2</h1>
-        </div>
-        <div class="grid">
-          <div class="card content">
-            <h2>Anki 抽卡</h2>
-            <h1>Anki Day 04：前端基础 2</h1>
-<h2>卡片格式</h2>
-<p>Front｜Back</p>
-<ul>
-<li><b>1. **Front**: state</b></li>
-</ul>
-<p>   **Back**: 状态｜The loading state is not handled properly.｜提示：组件/页面状态</p>
-<ul>
-<li><b>2. **Front**: props</b></li>
-</ul>
-<p>   **Back**: 属性｜Do not mutate props inside the child component.｜提示：React 高频</p>
-<ul>
-<li><b>3. **Front**: hook</b></li>
-</ul>
-<p>   **Back**: 钩子｜This custom hook simplifies the fetch logic.｜提示：React 高频</p>
-<ul>
-<li><b>4. **Front**: debounce</b></li>
-</ul>
-<p>   **Back**: 防抖｜We should debounce the search input.｜提示：输入优化</p>
-<ul>
-<li><b>5. **Front**: lazy loading</b></li>
-</ul>
-<p>   **Back**: 懒加载｜Lazy loading reduces the initial load time.｜提示：按需加载</p>
-          </div>
-          <div class="card content">
-            <h2>晨读口语</h2>
-            <h1>Speaking Day 04：前端基础 2</h1>
-<h2>晨读短句</h2>
-<ul>
-<li><b>1. The loading state is not handled properly.</b></li>
-</ul>
-<p>   - 中文：状态</p>
-<p>   - 提示：组件/页面状态</p>
-<ul>
-<li><b>2. Do not mutate props inside the child component.</b></li>
-</ul>
-<p>   - 中文：属性</p>
-<p>   - 提示：React 高频</p>
-<ul>
-<li><b>3. This custom hook simplifies the fetch logic.</b></li>
-</ul>
-<p>   - 中文：钩子</p>
-<p>   - 提示：React 高频</p>
-<ul>
-<li><b>4. We should debounce the search input.</b></li>
-</ul>
-<p>   - 中文：防抖</p>
-<p>   - 提示：输入优化</p>
-<ul>
-<li><b>5. Lazy loading reduces the initial load time.</b></li>
-</ul>
-<p>   - 中文：懒加载</p>
-<p>   - 提示：按需加载</p>
-<h2>跟读提示</h2>
-<ul>
-<li>先慢读 2 遍</li>
-<li>再正常语速读 3 遍</li>
-<li>最后脱稿复述其中 2 句</li>
-</ul>
-          </div>
-        </div>
-        
+    <div class="hero">
+      <span class="badge">Day 04</span>
+      <h1>前端基础 2</h1>
+      <p class="muted">支持卡片式 Anki 浏览与晨读口语切换。</p>
+    </div>
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('anki', this)">Anki 抽卡</button>
+        <button class="tab-btn" onclick="switchTab('speaking', this)">晨读口语</button>
+      </div>
+      <div id="anki" class="tab-panel active">
+        <h2 class="section-title">Anki 抽卡</h2>
+        <div class="anki-grid"><div class="anki-card"><div class="anki-front">state</div><div class="anki-back">状态｜The loading state is not handled properly.｜提示：组件/页面状态</div></div><div class="anki-card"><div class="anki-front">props</div><div class="anki-back">属性｜Do not mutate props inside the child component.｜提示：React 高频</div></div><div class="anki-card"><div class="anki-front">hook</div><div class="anki-back">钩子｜This custom hook simplifies the fetch logic.｜提示：React 高频</div></div><div class="anki-card"><div class="anki-front">debounce</div><div class="anki-back">防抖｜We should debounce the search input.｜提示：输入优化</div></div><div class="anki-card"><div class="anki-front">lazy loading</div><div class="anki-back">懒加载｜Lazy loading reduces the initial load time.｜提示：按需加载</div></div></div>
+      </div>
+      <div id="speaking" class="tab-panel">
+        <h2 class="section-title">晨读口语</h2>
+        <div class="card speak-item"><div><b>The loading state is not handled properly.</b></div><div class="muted">中文：状态</div><div class="muted">提示：组件/页面状态</div></div><div class="card speak-item"><div><b>Do not mutate props inside the child component.</b></div><div class="muted">中文：属性</div><div class="muted">提示：React 高频</div></div><div class="card speak-item"><div><b>This custom hook simplifies the fetch logic.</b></div><div class="muted">中文：钩子</div><div class="muted">提示：React 高频</div></div><div class="card speak-item"><div><b>We should debounce the search input.</b></div><div class="muted">中文：防抖</div><div class="muted">提示：输入优化</div></div><div class="card speak-item"><div><b>Lazy loading reduces the initial load time.</b></div><div class="muted">中文：懒加载</div><div class="muted">提示：按需加载</div></div>
+        <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
+      </div>
+    </div>
+    
   </div>
 </body>
 </html>
