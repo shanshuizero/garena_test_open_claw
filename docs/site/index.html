@@ -7,11 +7,11 @@
   <style>
     :root {
       --bg-dark:#000000;
-      --bg-light:#f5f5f7;
-      --text-dark:#1d1d1f;
+      --bg-light:#000000;
+      --text-dark:#ffffff;
       --text-light:#ffffff;
       --text-muted-dark:rgba(255,255,255,.72);
-      --text-muted-light:rgba(0,0,0,.72);
+      --text-muted-light:rgba(255,255,255,.72);
       --blue:#0071e3;
       --blue-dark:#2997ff;
       --link:#5f86c5;
@@ -43,13 +43,11 @@
     .section-copy { font-size:17px; line-height:1.47; margin:0 0 24px; max-width:760px; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
     .overview-card { background:var(--surface-dark); border-radius:12px; padding:22px; box-shadow:var(--shadow); }
-    .section-light .overview-card { background:#fff; color:var(--text-dark); }
+    .section-light .overview-card { background:var(--surface-dark); color:var(--text-dark); }
     .card-title { font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:21px; line-height:1.19; font-weight:700; letter-spacing:0.231px; margin:10px 0 8px; }
-    .overview-card .card-title a { color:#d4d7dd; text-decoration:none; }
-    .overview-card .card-title a:hover { color:#ffffff; text-decoration:none; }
-    .card-copy { font-size:14px; line-height:1.43; letter-spacing:-0.224px; color:inherit; opacity:.78; }
+        .card-copy { font-size:14px; line-height:1.43; letter-spacing:-0.224px; color:inherit; opacity:.78; }
     .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; line-height:1.33; letter-spacing:-0.12px; background:rgba(255,255,255,.12); color:#fff; }
-    .section-light .badge { background:#e8edf5; color:#1d1d1f; }
+    .section-light .badge { background:rgba(255,255,255,.12); color:#fff; }
     .days-grid .overview-card { min-height:144px; }
     .tabs { display:flex; gap:10px; margin:0 0 20px; flex-wrap:wrap; }
     .tab-btn { border:none; border-radius:980px; background:#1d1d1f; color:#fff; padding:8px 16px; cursor:pointer; font-size:14px; line-height:1.43; }
@@ -60,8 +58,8 @@
     .tab-panel.active { display:block; }
     .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
     .speak-btn, .speed-chip { border:none; border-radius:11px; padding:8px 14px; cursor:pointer; font-size:14px; line-height:1.43; }
-    .speak-btn { background:#fafafc; color:rgba(0,0,0,.8); border:3px solid rgba(0,0,0,.04); }
-    .speed-chip { background:#fafafc; color:rgba(0,0,0,.8); border:3px solid rgba(0,0,0,.04); }
+    .speak-btn { background:#1d1d1f; color:#ffffff; border:1px solid rgba(255,255,255,.12); }
+    .speed-chip { background:#1d1d1f; color:#ffffff; border:1px solid rgba(255,255,255,.12); }
     .speed-chip.active { background:var(--blue); color:#fff; border-color:transparent; }
     .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
     .anki-scene { perspective:1200px; }
@@ -73,7 +71,7 @@
     .anki-front { font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:28px; line-height:1.14; letter-spacing:0.196px; font-weight:400; margin-bottom:12px; }
     .anki-back { font-size:17px; line-height:1.47; letter-spacing:-0.374px; white-space:pre-line; }
     .flip-tip { margin-top:16px; font-size:12px; line-height:1.33; letter-spacing:-0.12px; opacity:.72; }
-    .speak-item { background:#fff; color:#1d1d1f; border-radius:12px; padding:18px; box-shadow:var(--shadow); margin-bottom:16px; }
+    .speak-item { background:var(--surface-dark); color:#fff; border-radius:12px; padding:18px; box-shadow:var(--shadow); margin-bottom:16px; }
     .speak-item b { font-size:21px; line-height:1.19; letter-spacing:0.231px; font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; }
     .footer-note { margin-top:16px; font-size:14px; line-height:1.43; letter-spacing:-0.224px; opacity:.74; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:22px; }
@@ -166,7 +164,7 @@
     <section class="section-dark">
       <div class="inner">
         <h2 class="section-title">推荐从这些内容开始</h2>
-        <div class="grid"><div class="overview-card"><span class="badge">Day 01</span><h3 class="card-title"><a href="./day-01.html">通用开发核心 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 02</span><h3 class="card-title"><a href="./day-02.html">通用开发核心 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 03</span><h3 class="card-title"><a href="./day-03.html">前端基础 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 04</span><h3 class="card-title"><a href="./day-04.html">前端基础 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 05</span><h3 class="card-title"><a href="./day-05.html">后端基础 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 06</span><h3 class="card-title"><a href="./day-06.html">后端基础 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 07</span><h3 class="card-title"><a href="./day-07.html">API / 数据库 / DevOps</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 08</span><h3 class="card-title"><a href="./day-08.html">调试 / 协作 / 评审</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div></div>
+        <div class="grid"><div class="overview-card"><span class="badge">Day 01</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-01.html">通用开发核心 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 02</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-02.html">通用开发核心 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 03</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-03.html">前端基础 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 04</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-04.html">前端基础 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 05</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-05.html">后端基础 1</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 06</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-06.html">后端基础 2</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 07</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-07.html">API / 数据库 / DevOps</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div><div class="overview-card"><span class="badge">Day 08</span><h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-08.html">调试 / 协作 / 评审</a></h3><p class="card-copy">翻面卡片、晨读切换、朗读控制与上下日导航。</p></div></div>
       </div>
     </section>
     
