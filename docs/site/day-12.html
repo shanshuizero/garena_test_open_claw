@@ -37,6 +37,9 @@
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
+    .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .speak-btn:hover { background:#3b5d96; }
+    .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -48,6 +51,35 @@
     function flipCard(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+    function speakMany(texts) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }
+      next();
     }
   </script>
 </head>
@@ -62,7 +94,7 @@
     <div class="hero">
       <span class="badge">Day 12</span>
       <h1>Vue 核心</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -71,11 +103,12 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-scene">  <div id="card-12-1" class="anki-card" onclick="flipCard('card-12-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">reactive</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">响应式的｜The reactive state is shared across components.｜提示：Vue 核心思想</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-2" class="anki-card" onclick="flipCard('card-12-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">computed property</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">计算属性｜A computed property should be free of side effects.｜提示：Vue 高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-3" class="anki-card" onclick="flipCard('card-12-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">watcher</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">侦听器｜Use a watcher only when a computed property is not enough.｜提示：谨慎使用</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-4" class="anki-card" onclick="flipCard('card-12-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">slot</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">插槽｜Slots make the component API more flexible.｜提示：组件封装</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-5" class="anki-card" onclick="flipCard('card-12-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">route guard</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">路由守卫｜A route guard can block unauthorized access.｜提示：权限控制</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-12-1" class="anki-card" onclick="flipCard('card-12-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">reactive</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('reactive')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('响应式的｜The reactive state is shared across components.｜提示：Vue 核心思想')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">响应式的｜The reactive state is shared across components.｜提示：Vue 核心思想</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('reactive')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('响应式的｜The reactive state is shared across components.｜提示：Vue 核心思想')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-2" class="anki-card" onclick="flipCard('card-12-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">computed property</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('computed property')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('计算属性｜A computed property should be free of side effects.｜提示：Vue 高频')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">计算属性｜A computed property should be free of side effects.｜提示：Vue 高频</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('computed property')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('计算属性｜A computed property should be free of side effects.｜提示：Vue 高频')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-3" class="anki-card" onclick="flipCard('card-12-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">watcher</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('watcher')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('侦听器｜Use a watcher only when a computed property is not enough.｜提示：谨慎使用')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">侦听器｜Use a watcher only when a computed property is not enough.｜提示：谨慎使用</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('watcher')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('侦听器｜Use a watcher only when a computed property is not enough.｜提示：谨慎使用')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-4" class="anki-card" onclick="flipCard('card-12-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">slot</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('slot')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('插槽｜Slots make the component API more flexible.｜提示：组件封装')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">插槽｜Slots make the component API more flexible.｜提示：组件封装</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('slot')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('插槽｜Slots make the component API more flexible.｜提示：组件封装')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-12-5" class="anki-card" onclick="flipCard('card-12-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">route guard</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('route guard')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('路由守卫｜A route guard can block unauthorized access.｜提示：权限控制')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">路由守卫｜A route guard can block unauthorized access.｜提示：权限控制</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('route guard')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('路由守卫｜A route guard can block unauthorized access.｜提示：权限控制')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
-        <div class="card speak-item"><div><b>The reactive state is shared across components.</b></div><div class="muted">中文：响应式的</div><div class="muted">提示：Vue 核心思想</div></div><div class="card speak-item"><div><b>A computed property should be free of side effects.</b></div><div class="muted">中文：计算属性</div><div class="muted">提示：Vue 高频</div></div><div class="card speak-item"><div><b>Use a watcher only when a computed property is not enough.</b></div><div class="muted">中文：侦听器</div><div class="muted">提示：谨慎使用</div></div><div class="card speak-item"><div><b>Slots make the component API more flexible.</b></div><div class="muted">中文：插槽</div><div class="muted">提示：组件封装</div></div><div class="card speak-item"><div><b>A route guard can block unauthorized access.</b></div><div class="muted">中文：路由守卫</div><div class="muted">提示：权限控制</div></div>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany(['The reactive state is shared across components.','A computed property should be free of side effects.','Use a watcher only when a computed property is not enough.','Slots make the component API more flexible.','A route guard can block unauthorized access.'])">▶ 朗读本页晨读</button></div>
+        <div class="card speak-item"><div><b>The reactive state is shared across components.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('The reactive state is shared across components.')">🔊 朗读本句</button></div><div class="muted">中文：响应式的</div><div class="muted">提示：Vue 核心思想</div></div><div class="card speak-item"><div><b>A computed property should be free of side effects.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('A computed property should be free of side effects.')">🔊 朗读本句</button></div><div class="muted">中文：计算属性</div><div class="muted">提示：Vue 高频</div></div><div class="card speak-item"><div><b>Use a watcher only when a computed property is not enough.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Use a watcher only when a computed property is not enough.')">🔊 朗读本句</button></div><div class="muted">中文：侦听器</div><div class="muted">提示：谨慎使用</div></div><div class="card speak-item"><div><b>Slots make the component API more flexible.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Slots make the component API more flexible.')">🔊 朗读本句</button></div><div class="muted">中文：插槽</div><div class="muted">提示：组件封装</div></div><div class="card speak-item"><div><b>A route guard can block unauthorized access.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('A route guard can block unauthorized access.')">🔊 朗读本句</button></div><div class="muted">中文：路由守卫</div><div class="muted">提示：权限控制</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
       <div class="pager">

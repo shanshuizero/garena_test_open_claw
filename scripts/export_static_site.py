@@ -96,6 +96,9 @@ def page_wrap(title: str, body: str) -> str:
     .footer-note {{ margin-top:16px; color:#97aac5; font-size:14px; }}
     .pager {{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }}
     .pager a {{ display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }}
+    .speak-btn {{ border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }}
+    .speak-btn:hover {{ background:#3b5d96; }}
+    .tool-row {{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }}
   </style>
   <script>
     function switchTab(id, btn) {{
@@ -107,6 +110,35 @@ def page_wrap(title: str, body: str) -> str:
     function flipCard(id) {{
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }}
+    function speakText(text) {{
+      if (!('speechSynthesis' in window)) {{
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }}
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }}
+    function speakMany(texts) {{
+      if (!('speechSynthesis' in window)) {{
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }}
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {{
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }}
+      next();
     }}
   </script>
 </head>
@@ -129,15 +161,21 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     anki_html = ['<div class="anki-grid">']
     for idx, c in enumerate(cards, start=1):
         card_id = f'card-{n:02d}-{idx}'
+        front = html.escape(c['front'])
+        back = html.escape(c['back'])
+        front_js = html.escape(c['front'], quote=True)
+        back_js = html.escape(c['back'], quote=True)
         anki_html.append(
             f'<div class="anki-scene">'
             f'  <div id="{card_id}" class="anki-card" onclick="flipCard(\'{card_id}\')">'
             f'    <div class="anki-face anki-front-face">'
-            f'      <div class="anki-front">{html.escape(c["front"])}</div>'
+            f'      <div class="anki-front">{front}</div>'
+            f'      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText(\'{front_js}\')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText(\'{back_js}\')">🔊 朗读背面</button></div>'
             f'      <div class="flip-tip">点击卡片翻面</div>'
             f'    </div>'
             f'    <div class="anki-face anki-back-face">'
-            f'      <div class="anki-back">{html.escape(c["back"])}</div>'
+            f'      <div class="anki-back">{back}</div>'
+            f'      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText(\'{front_js}\')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText(\'{back_js}\')">🔊 朗读背面</button></div>'
             f'      <div class="flip-tip">再次点击可翻回正面</div>'
             f'    </div>'
             f'  </div>'
@@ -145,12 +183,19 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
         )
     anki_html.append('</div>')
     speak_html = []
+    sentence_js_list = []
     for item in speaking_items:
+        sentence = html.escape(item['sentence'])
+        cn = html.escape(item['cn'])
+        tip = html.escape(item['tip'])
+        sentence_js = html.escape(item['sentence'], quote=True)
+        sentence_js_list.append(f"'{sentence_js}'")
         speak_html.append(
             f'<div class="card speak-item">'
-            f'<div><b>{html.escape(item["sentence"])}</b></div>'
-            f'<div class="muted">中文：{html.escape(item["cn"])}</div>'
-            f'<div class="muted">提示：{html.escape(item["tip"])}</div>'
+            f'<div><b>{sentence}</b></div>'
+            f'<div class="tool-row"><button class="speak-btn" onclick="speakText(\'{sentence_js}\')">🔊 朗读本句</button></div>'
+            f'<div class="muted">中文：{cn}</div>'
+            f'<div class="muted">提示：{tip}</div>'
             f'</div>'
         )
     prev_link = f'./day-{n-1:02d}.html' if n > 1 else './days.html'
@@ -161,7 +206,7 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     <div class="hero">
       <span class="badge">Day {n:02d}</span>
       <h1>{html.escape(theme)}</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -174,6 +219,7 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany([{','.join(sentence_js_list)}])">▶ 朗读本页晨读</button></div>
         {''.join(speak_html)}
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
@@ -213,17 +259,17 @@ def export_index(days: list[tuple[int, str]]) -> None:
         cards.append(
             f'<div class="card"><span class="badge">Day {n:02d}</span>'
             f'<h3><a href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
-            f'<p class="muted">翻面卡片 + 晨读切换 + 上下日导航</p></div>'
+            f'<p class="muted">翻面卡片 + 晨读切换 + 朗读按钮</p></div>'
         )
     body = f'''
     <div class="hero">
       <h1>Garena Test OpenClaw 学习站</h1>
-      <p>一个适合 GitHub Pages 展示的静态英文学习站，覆盖前后端开发英语、30 天学习计划、翻面 Anki 卡片与晨读口语。</p>
+      <p>一个适合 GitHub Pages 展示的静态英文学习站，覆盖前后端开发英语、30 天学习计划、翻面 Anki 卡片、晨读口语与浏览器原生朗读。</p>
     </div>
     <div class="grid">
       <div class="card"><h2>30 天学习计划</h2><p class="muted">按天学习，适合持续积累。</p><p><a href="./days.html">立即开始</a></p></div>
       <div class="card"><h2>翻面卡片</h2><p class="muted">点击卡片即可翻面，强化记忆。</p></div>
-      <div class="card"><h2>晨读口语</h2><p class="muted">支持 tab 切换，适合每日朗读训练。</p></div>
+      <div class="card"><h2>朗读功能</h2><p class="muted">支持 Anki 与晨读口语句子朗读。</p></div>
     </div>
     <div class="card">
       <h2>推荐从这些内容开始</h2>
@@ -239,12 +285,12 @@ def export_days_index(days: list[tuple[int, str]]) -> None:
         cards.append(
             f'<div class="card"><span class="badge">Day {n:02d}</span>'
             f'<h3><a href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
-            f'<p class="muted">翻面卡片 + 晨读口语</p></div>'
+            f'<p class="muted">翻面卡片 + 晨读口语 + 朗读</p></div>'
         )
     body = f'''
     <div class="hero">
       <h1>30 天学习计划</h1>
-      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>，并支持上下日跳转。</p>
+      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>，并支持朗读与上下日跳转。</p>
     </div>
     <div class="grid">{''.join(cards)}</div>
     '''

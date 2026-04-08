@@ -37,6 +37,9 @@
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
+    .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .speak-btn:hover { background:#3b5d96; }
+    .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -48,6 +51,35 @@
     function flipCard(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+    function speakMany(texts) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }
+      next();
     }
   </script>
 </head>
@@ -62,7 +94,7 @@
     <div class="hero">
       <span class="badge">Day 05</span>
       <h1>后端基础 1</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -71,11 +103,12 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-scene">  <div id="card-05-1" class="anki-card" onclick="flipCard('card-05-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">endpoint</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">接口端点｜This endpoint returns the user profile data.｜提示：API 地址</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-2" class="anki-card" onclick="flipCard('card-05-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">service</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">服务｜The notification service is temporarily unavailable.｜提示：业务服务</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-3" class="anki-card" onclick="flipCard('card-05-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">authentication</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">认证｜Authentication fails when the token expires.｜提示：确认身份</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-4" class="anki-card" onclick="flipCard('card-05-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">authorization</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">授权｜Authorization should be enforced on the server side.｜提示：确认权限</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-5" class="anki-card" onclick="flipCard('card-05-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">token</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">令牌｜The access token is stored in memory.｜提示：JWT 场景高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-05-1" class="anki-card" onclick="flipCard('card-05-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">endpoint</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('endpoint')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('接口端点｜This endpoint returns the user profile data.｜提示：API 地址')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">接口端点｜This endpoint returns the user profile data.｜提示：API 地址</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('endpoint')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('接口端点｜This endpoint returns the user profile data.｜提示：API 地址')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-2" class="anki-card" onclick="flipCard('card-05-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">service</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('service')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('服务｜The notification service is temporarily unavailable.｜提示：业务服务')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">服务｜The notification service is temporarily unavailable.｜提示：业务服务</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('service')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('服务｜The notification service is temporarily unavailable.｜提示：业务服务')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-3" class="anki-card" onclick="flipCard('card-05-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">authentication</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('authentication')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('认证｜Authentication fails when the token expires.｜提示：确认身份')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">认证｜Authentication fails when the token expires.｜提示：确认身份</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('authentication')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('认证｜Authentication fails when the token expires.｜提示：确认身份')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-4" class="anki-card" onclick="flipCard('card-05-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">authorization</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('authorization')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('授权｜Authorization should be enforced on the server side.｜提示：确认权限')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">授权｜Authorization should be enforced on the server side.｜提示：确认权限</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('authorization')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('授权｜Authorization should be enforced on the server side.｜提示：确认权限')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-05-5" class="anki-card" onclick="flipCard('card-05-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">token</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('token')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('令牌｜The access token is stored in memory.｜提示：JWT 场景高频')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">令牌｜The access token is stored in memory.｜提示：JWT 场景高频</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('token')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('令牌｜The access token is stored in memory.｜提示：JWT 场景高频')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
-        <div class="card speak-item"><div><b>This endpoint returns the user profile data.</b></div><div class="muted">中文：接口端点</div><div class="muted">提示：API 地址</div></div><div class="card speak-item"><div><b>The notification service is temporarily unavailable.</b></div><div class="muted">中文：服务</div><div class="muted">提示：业务服务</div></div><div class="card speak-item"><div><b>Authentication fails when the token expires.</b></div><div class="muted">中文：认证</div><div class="muted">提示：确认身份</div></div><div class="card speak-item"><div><b>Authorization should be enforced on the server side.</b></div><div class="muted">中文：授权</div><div class="muted">提示：确认权限</div></div><div class="card speak-item"><div><b>The access token is stored in memory.</b></div><div class="muted">中文：令牌</div><div class="muted">提示：JWT 场景高频</div></div>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany(['This endpoint returns the user profile data.','The notification service is temporarily unavailable.','Authentication fails when the token expires.','Authorization should be enforced on the server side.','The access token is stored in memory.'])">▶ 朗读本页晨读</button></div>
+        <div class="card speak-item"><div><b>This endpoint returns the user profile data.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('This endpoint returns the user profile data.')">🔊 朗读本句</button></div><div class="muted">中文：接口端点</div><div class="muted">提示：API 地址</div></div><div class="card speak-item"><div><b>The notification service is temporarily unavailable.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('The notification service is temporarily unavailable.')">🔊 朗读本句</button></div><div class="muted">中文：服务</div><div class="muted">提示：业务服务</div></div><div class="card speak-item"><div><b>Authentication fails when the token expires.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Authentication fails when the token expires.')">🔊 朗读本句</button></div><div class="muted">中文：认证</div><div class="muted">提示：确认身份</div></div><div class="card speak-item"><div><b>Authorization should be enforced on the server side.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Authorization should be enforced on the server side.')">🔊 朗读本句</button></div><div class="muted">中文：授权</div><div class="muted">提示：确认权限</div></div><div class="card speak-item"><div><b>The access token is stored in memory.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('The access token is stored in memory.')">🔊 朗读本句</button></div><div class="muted">中文：令牌</div><div class="muted">提示：JWT 场景高频</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
       <div class="pager">

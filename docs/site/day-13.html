@@ -37,6 +37,9 @@
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
+    .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .speak-btn:hover { background:#3b5d96; }
+    .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -48,6 +51,35 @@
     function flipCard(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+    function speakMany(texts) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }
+      next();
     }
   </script>
 </head>
@@ -62,7 +94,7 @@
     <div class="hero">
       <span class="badge">Day 13</span>
       <h1>TypeScript 核心</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -71,11 +103,12 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-scene">  <div id="card-13-1" class="anki-card" onclick="flipCard('card-13-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">type inference</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型推断｜Type inference works well here.｜提示：减少显式标注</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-2" class="anki-card" onclick="flipCard('card-13-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">generic</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">泛型｜This helper can be rewritten as a generic function.｜提示：复用类型逻辑</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-3" class="anki-card" onclick="flipCard('card-13-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">narrowing</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型收窄｜Type narrowing is required here.｜提示：缩小类型范围</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-4" class="anki-card" onclick="flipCard('card-13-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">type guard</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型守卫｜A type guard makes the code safer.｜提示：运行时判断</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-5" class="anki-card" onclick="flipCard('card-13-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">utility type</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">工具类型｜Utility types can simplify model definitions.｜提示：TS 高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-13-1" class="anki-card" onclick="flipCard('card-13-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">type inference</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('type inference')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型推断｜Type inference works well here.｜提示：减少显式标注')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型推断｜Type inference works well here.｜提示：减少显式标注</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('type inference')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型推断｜Type inference works well here.｜提示：减少显式标注')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-2" class="anki-card" onclick="flipCard('card-13-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">generic</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('generic')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('泛型｜This helper can be rewritten as a generic function.｜提示：复用类型逻辑')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">泛型｜This helper can be rewritten as a generic function.｜提示：复用类型逻辑</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('generic')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('泛型｜This helper can be rewritten as a generic function.｜提示：复用类型逻辑')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-3" class="anki-card" onclick="flipCard('card-13-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">narrowing</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('narrowing')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型收窄｜Type narrowing is required here.｜提示：缩小类型范围')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型收窄｜Type narrowing is required here.｜提示：缩小类型范围</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('narrowing')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型收窄｜Type narrowing is required here.｜提示：缩小类型范围')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-4" class="anki-card" onclick="flipCard('card-13-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">type guard</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('type guard')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型守卫｜A type guard makes the code safer.｜提示：运行时判断')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">类型守卫｜A type guard makes the code safer.｜提示：运行时判断</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('type guard')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('类型守卫｜A type guard makes the code safer.｜提示：运行时判断')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-13-5" class="anki-card" onclick="flipCard('card-13-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">utility type</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('utility type')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('工具类型｜Utility types can simplify model definitions.｜提示：TS 高频')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">工具类型｜Utility types can simplify model definitions.｜提示：TS 高频</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('utility type')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('工具类型｜Utility types can simplify model definitions.｜提示：TS 高频')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
-        <div class="card speak-item"><div><b>Type inference works well here.</b></div><div class="muted">中文：类型推断</div><div class="muted">提示：减少显式标注</div></div><div class="card speak-item"><div><b>This helper can be rewritten as a generic function.</b></div><div class="muted">中文：泛型</div><div class="muted">提示：复用类型逻辑</div></div><div class="card speak-item"><div><b>Type narrowing is required here.</b></div><div class="muted">中文：类型收窄</div><div class="muted">提示：缩小类型范围</div></div><div class="card speak-item"><div><b>A type guard makes the code safer.</b></div><div class="muted">中文：类型守卫</div><div class="muted">提示：运行时判断</div></div><div class="card speak-item"><div><b>Utility types can simplify model definitions.</b></div><div class="muted">中文：工具类型</div><div class="muted">提示：TS 高频</div></div>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany(['Type inference works well here.','This helper can be rewritten as a generic function.','Type narrowing is required here.','A type guard makes the code safer.','Utility types can simplify model definitions.'])">▶ 朗读本页晨读</button></div>
+        <div class="card speak-item"><div><b>Type inference works well here.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Type inference works well here.')">🔊 朗读本句</button></div><div class="muted">中文：类型推断</div><div class="muted">提示：减少显式标注</div></div><div class="card speak-item"><div><b>This helper can be rewritten as a generic function.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('This helper can be rewritten as a generic function.')">🔊 朗读本句</button></div><div class="muted">中文：泛型</div><div class="muted">提示：复用类型逻辑</div></div><div class="card speak-item"><div><b>Type narrowing is required here.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Type narrowing is required here.')">🔊 朗读本句</button></div><div class="muted">中文：类型收窄</div><div class="muted">提示：缩小类型范围</div></div><div class="card speak-item"><div><b>A type guard makes the code safer.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('A type guard makes the code safer.')">🔊 朗读本句</button></div><div class="muted">中文：类型守卫</div><div class="muted">提示：运行时判断</div></div><div class="card speak-item"><div><b>Utility types can simplify model definitions.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Utility types can simplify model definitions.')">🔊 朗读本句</button></div><div class="muted">中文：工具类型</div><div class="muted">提示：TS 高频</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
       <div class="pager">

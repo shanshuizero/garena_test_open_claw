@@ -37,6 +37,9 @@
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
+    .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .speak-btn:hover { background:#3b5d96; }
+    .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -48,6 +51,35 @@
     function flipCard(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+    function speakMany(texts) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }
+      next();
     }
   </script>
 </head>
@@ -62,7 +94,7 @@
     <div class="hero">
       <span class="badge">Day 02</span>
       <h1>通用开发核心 2</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -71,11 +103,12 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-scene">  <div id="card-02-1" class="anki-card" onclick="flipCard('card-02-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">implement</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">实现｜I will implement the new permission logic today.｜提示：实现功能/逻辑</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-2" class="anki-card" onclick="flipCard('card-02-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">refactor</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">重构｜We need to refactor this function.｜提示：优化内部结构</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-3" class="anki-card" onclick="flipCard('card-02-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">scalable</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">可扩展的｜We need a more scalable solution.｜提示：系统设计高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-4" class="anki-card" onclick="flipCard('card-02-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">robust</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">健壮的｜The error handling is not robust enough.｜提示：异常下仍稳定</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-5" class="anki-card" onclick="flipCard('card-02-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">deploy</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">部署｜We will deploy the patch tonight.｜提示：发布部署高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-02-1" class="anki-card" onclick="flipCard('card-02-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">implement</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('implement')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('实现｜I will implement the new permission logic today.｜提示：实现功能/逻辑')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">实现｜I will implement the new permission logic today.｜提示：实现功能/逻辑</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('implement')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('实现｜I will implement the new permission logic today.｜提示：实现功能/逻辑')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-2" class="anki-card" onclick="flipCard('card-02-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">refactor</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('refactor')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('重构｜We need to refactor this function.｜提示：优化内部结构')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">重构｜We need to refactor this function.｜提示：优化内部结构</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('refactor')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('重构｜We need to refactor this function.｜提示：优化内部结构')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-3" class="anki-card" onclick="flipCard('card-02-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">scalable</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('scalable')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('可扩展的｜We need a more scalable solution.｜提示：系统设计高频')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">可扩展的｜We need a more scalable solution.｜提示：系统设计高频</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('scalable')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('可扩展的｜We need a more scalable solution.｜提示：系统设计高频')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-4" class="anki-card" onclick="flipCard('card-02-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">robust</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('robust')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('健壮的｜The error handling is not robust enough.｜提示：异常下仍稳定')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">健壮的｜The error handling is not robust enough.｜提示：异常下仍稳定</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('robust')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('健壮的｜The error handling is not robust enough.｜提示：异常下仍稳定')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-02-5" class="anki-card" onclick="flipCard('card-02-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">deploy</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('deploy')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('部署｜We will deploy the patch tonight.｜提示：发布部署高频')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">部署｜We will deploy the patch tonight.｜提示：发布部署高频</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('deploy')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('部署｜We will deploy the patch tonight.｜提示：发布部署高频')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
-        <div class="card speak-item"><div><b>I will implement the new permission logic today.</b></div><div class="muted">中文：实现</div><div class="muted">提示：实现功能/逻辑</div></div><div class="card speak-item"><div><b>We need to refactor this function.</b></div><div class="muted">中文：重构</div><div class="muted">提示：优化内部结构</div></div><div class="card speak-item"><div><b>We need a more scalable solution.</b></div><div class="muted">中文：可扩展的</div><div class="muted">提示：系统设计高频</div></div><div class="card speak-item"><div><b>The error handling is not robust enough.</b></div><div class="muted">中文：健壮的</div><div class="muted">提示：异常下仍稳定</div></div><div class="card speak-item"><div><b>We will deploy the patch tonight.</b></div><div class="muted">中文：部署</div><div class="muted">提示：发布部署高频</div></div>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany(['I will implement the new permission logic today.','We need to refactor this function.','We need a more scalable solution.','The error handling is not robust enough.','We will deploy the patch tonight.'])">▶ 朗读本页晨读</button></div>
+        <div class="card speak-item"><div><b>I will implement the new permission logic today.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('I will implement the new permission logic today.')">🔊 朗读本句</button></div><div class="muted">中文：实现</div><div class="muted">提示：实现功能/逻辑</div></div><div class="card speak-item"><div><b>We need to refactor this function.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('We need to refactor this function.')">🔊 朗读本句</button></div><div class="muted">中文：重构</div><div class="muted">提示：优化内部结构</div></div><div class="card speak-item"><div><b>We need a more scalable solution.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('We need a more scalable solution.')">🔊 朗读本句</button></div><div class="muted">中文：可扩展的</div><div class="muted">提示：系统设计高频</div></div><div class="card speak-item"><div><b>The error handling is not robust enough.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('The error handling is not robust enough.')">🔊 朗读本句</button></div><div class="muted">中文：健壮的</div><div class="muted">提示：异常下仍稳定</div></div><div class="card speak-item"><div><b>We will deploy the patch tonight.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('We will deploy the patch tonight.')">🔊 朗读本句</button></div><div class="muted">中文：部署</div><div class="muted">提示：发布部署高频</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
       <div class="pager">

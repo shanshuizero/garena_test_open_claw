@@ -37,6 +37,9 @@
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
     .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
+    .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .speak-btn:hover { background:#3b5d96; }
+    .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -48,6 +51,35 @@
     function flipCard(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
+    }
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+    function speakMany(texts) {
+      if (!('speechSynthesis' in window)) {
+        alert('当前浏览器不支持朗读功能');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const queue = [...texts];
+      function next() {
+        const text = queue.shift();
+        if (!text) return;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.rate = 0.95;
+        utter.onend = next;
+        window.speechSynthesis.speak(utter);
+      }
+      next();
     }
   </script>
 </head>
@@ -62,7 +94,7 @@
     <div class="hero">
       <span class="badge">Day 20</span>
       <h1>Node.js 后端</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -71,11 +103,12 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-scene">  <div id="card-20-1" class="anki-card" onclick="flipCard('card-20-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">event-driven architecture</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">事件驱动架构｜Node.js is a good fit for event-driven architecture.｜提示：Node 典型定位</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-2" class="anki-card" onclick="flipCard('card-20-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">non-blocking I/O</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">非阻塞 I/O｜Non-blocking I/O improves throughput.｜提示：Node 优势</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-3" class="anki-card" onclick="flipCard('card-20-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">stream backpressure</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">流式背压｜Stream backpressure prevents memory usage from growing too fast.｜提示：Stream 场景</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-4" class="anki-card" onclick="flipCard('card-20-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">memory leak</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">内存泄漏｜The process crashes because of a memory leak.｜提示：线上高频问题</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-5" class="anki-card" onclick="flipCard('card-20-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">worker thread</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">工作线程｜CPU-intensive tasks should be moved to worker threads.｜提示：CPU 密集任务</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-20-1" class="anki-card" onclick="flipCard('card-20-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">event-driven architecture</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('event-driven architecture')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('事件驱动架构｜Node.js is a good fit for event-driven architecture.｜提示：Node 典型定位')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">事件驱动架构｜Node.js is a good fit for event-driven architecture.｜提示：Node 典型定位</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('event-driven architecture')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('事件驱动架构｜Node.js is a good fit for event-driven architecture.｜提示：Node 典型定位')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-2" class="anki-card" onclick="flipCard('card-20-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">non-blocking I/O</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('non-blocking I/O')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('非阻塞 I/O｜Non-blocking I/O improves throughput.｜提示：Node 优势')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">非阻塞 I/O｜Non-blocking I/O improves throughput.｜提示：Node 优势</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('non-blocking I/O')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('非阻塞 I/O｜Non-blocking I/O improves throughput.｜提示：Node 优势')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-3" class="anki-card" onclick="flipCard('card-20-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">stream backpressure</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('stream backpressure')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('流式背压｜Stream backpressure prevents memory usage from growing too fast.｜提示：Stream 场景')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">流式背压｜Stream backpressure prevents memory usage from growing too fast.｜提示：Stream 场景</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('stream backpressure')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('流式背压｜Stream backpressure prevents memory usage from growing too fast.｜提示：Stream 场景')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-4" class="anki-card" onclick="flipCard('card-20-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">memory leak</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('memory leak')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('内存泄漏｜The process crashes because of a memory leak.｜提示：线上高频问题')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">内存泄漏｜The process crashes because of a memory leak.｜提示：线上高频问题</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('memory leak')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('内存泄漏｜The process crashes because of a memory leak.｜提示：线上高频问题')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-20-5" class="anki-card" onclick="flipCard('card-20-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">worker thread</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('worker thread')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('工作线程｜CPU-intensive tasks should be moved to worker threads.｜提示：CPU 密集任务')">🔊 朗读背面</button></div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">工作线程｜CPU-intensive tasks should be moved to worker threads.｜提示：CPU 密集任务</div>      <div class="tool-row"><button class="speak-btn" onclick="event.stopPropagation(); speakText('worker thread')">🔊 朗读正面</button><button class="speak-btn" onclick="event.stopPropagation(); speakText('工作线程｜CPU-intensive tasks should be moved to worker threads.｜提示：CPU 密集任务')">🔊 朗读背面</button></div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
-        <div class="card speak-item"><div><b>Node.js is a good fit for event-driven architecture.</b></div><div class="muted">中文：事件驱动架构</div><div class="muted">提示：Node 典型定位</div></div><div class="card speak-item"><div><b>Non-blocking I/O improves throughput.</b></div><div class="muted">中文：非阻塞 I/O</div><div class="muted">提示：Node 优势</div></div><div class="card speak-item"><div><b>Stream backpressure prevents memory usage from growing too fast.</b></div><div class="muted">中文：流式背压</div><div class="muted">提示：Stream 场景</div></div><div class="card speak-item"><div><b>The process crashes because of a memory leak.</b></div><div class="muted">中文：内存泄漏</div><div class="muted">提示：线上高频问题</div></div><div class="card speak-item"><div><b>CPU-intensive tasks should be moved to worker threads.</b></div><div class="muted">中文：工作线程</div><div class="muted">提示：CPU 密集任务</div></div>
+        <div class="tool-row"><button class="speak-btn" onclick="speakMany(['Node.js is a good fit for event-driven architecture.','Non-blocking I/O improves throughput.','Stream backpressure prevents memory usage from growing too fast.','The process crashes because of a memory leak.','CPU-intensive tasks should be moved to worker threads.'])">▶ 朗读本页晨读</button></div>
+        <div class="card speak-item"><div><b>Node.js is a good fit for event-driven architecture.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Node.js is a good fit for event-driven architecture.')">🔊 朗读本句</button></div><div class="muted">中文：事件驱动架构</div><div class="muted">提示：Node 典型定位</div></div><div class="card speak-item"><div><b>Non-blocking I/O improves throughput.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Non-blocking I/O improves throughput.')">🔊 朗读本句</button></div><div class="muted">中文：非阻塞 I/O</div><div class="muted">提示：Node 优势</div></div><div class="card speak-item"><div><b>Stream backpressure prevents memory usage from growing too fast.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('Stream backpressure prevents memory usage from growing too fast.')">🔊 朗读本句</button></div><div class="muted">中文：流式背压</div><div class="muted">提示：Stream 场景</div></div><div class="card speak-item"><div><b>The process crashes because of a memory leak.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('The process crashes because of a memory leak.')">🔊 朗读本句</button></div><div class="muted">中文：内存泄漏</div><div class="muted">提示：线上高频问题</div></div><div class="card speak-item"><div><b>CPU-intensive tasks should be moved to worker threads.</b></div><div class="tool-row"><button class="speak-btn" onclick="speakText('CPU-intensive tasks should be moved to worker threads.')">🔊 朗读本句</button></div><div class="muted">中文：工作线程</div><div class="muted">提示：CPU 密集任务</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
       <div class="pager">
