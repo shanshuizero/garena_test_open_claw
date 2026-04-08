@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <span class="badge">今日推送预览</span>
+  <h1>Day {{ '%02d'|format(day.day_number) }}｜{{ day.theme }}</h1>
+  <p class="muted">这是给每日消息推送对应的网页展示版。</p>
+</div>
+<div class="grid">
+  <div class="card content">
+    <h2>Anki 抽卡</h2>
+    {{ anki_html|safe }}
+  </div>
+  <div class="card content">
+    <h2>晨读口语</h2>
+    {{ speaking_html|safe }}
+  </div>
+</div>
+{% endblock %}

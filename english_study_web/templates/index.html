@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>英文学习资料 Web 服务</h1>
+  <p class="muted">把整理好的英文学习资料、30 天卡片、每日推送内容统一存储并生成网页展示。</p>
+</div>
+<div class="grid">
+  <div class="card">
+    <span class="badge">资料总览</span>
+    <h2>{{ stats.doc_count }}</h2>
+    <p class="muted">已导入文档数</p>
+  </div>
+  <div class="card">
+    <span class="badge">30 天计划</span>
+    <h2>{{ stats.day_count }}</h2>
+    <p class="muted">学习日页面数</p>
+  </div>
+  <div class="card">
+    <span class="badge">推送页面</span>
+    <h2>今日可预览</h2>
+    <p><a href="/daily/today">打开今日推送页</a></p>
+  </div>
+</div>
+<div class="card">
+  <h2>快速入口</h2>
+  <ul>
+    <li><a href="/docs">浏览全部资料</a></li>
+    <li><a href="/days">浏览 30 天计划</a></li>
+    <li><a href="/daily/today">查看今日推送页面</a></li>
+  </ul>
+</div>
+{% endblock %}

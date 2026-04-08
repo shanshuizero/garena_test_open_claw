@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <span class="badge">Day {{ '%02d'|format(day.day_number) }}</span>
+  <h1>{{ day.theme }}</h1>
+</div>
+<div class="grid">
+  <div class="card content">
+    <h2>Anki 抽卡</h2>
+    {{ anki_html|safe }}
+  </div>
+  <div class="card content">
+    <h2>晨读口语</h2>
+    {{ speaking_html|safe }}
+  </div>
+</div>
+{% endblock %}

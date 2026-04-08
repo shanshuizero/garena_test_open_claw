@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>全部资料</h1>
+  <p class="muted">按文件导入并展示的学习资料。</p>
+</div>
+<div class="grid">
+  {% for doc in docs %}
+  <div class="card">
+    <span class="badge">{{ doc.category }}</span>
+    <h3><a href="/doc/{{ doc.id }}">{{ doc.title }}</a></h3>
+    <p class="muted">{{ doc.path }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

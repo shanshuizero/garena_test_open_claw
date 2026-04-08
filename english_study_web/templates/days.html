@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>30 天学习计划</h1>
+  <p class="muted">Anki 抽卡 + 晨读口语</p>
+</div>
+<div class="grid">
+  {% for day in days %}
+  <div class="card">
+    <span class="badge">Day {{ '%02d'|format(day.day_number) }}</span>
+    <h3><a href="/day/{{ day.day_number }}">{{ day.theme }}</a></h3>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

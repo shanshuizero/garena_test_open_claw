@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .toolbar input {
+    background:#0d1528; color:#e8ecf3; border:1px solid #2d426b; border-radius:10px;
+    padding:10px 12px; min-width:180px;
+  }
+  .toolbar button {
+    background:#377dff; color:white; border:none; border-radius:10px; padding:10px 14px; cursor:pointer;
+  }
+  .timeline { position:relative; margin-left:12px; }
+  .timeline:before {
+    content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:#2b4068;
+  }
+  .timeline-item { position:relative; margin-left:36px; }
+  .timeline-item:before {
+    content:''; position:absolute; left:-31px; top:22px; width:12px; height:12px; border-radius:50%;
+    background:#7cc2ff; box-shadow:0 0 0 4px rgba(124,194,255,.15);
+  }
+  .preview { color:#c5d2e5; line-height:1.7; }
+</style>
+<div class="card">
+  <h1>每日推送记录</h1>
+  <p class="muted">时间线浏览 + 关键词搜索 + Day 筛选</p>
+  <form class="toolbar" method="get" action="/pushes">
+    <input type="text" name="q" placeholder="搜索标题或内容关键词" value="{{ q }}">
+    <input type="text" name="day" placeholder="按 Day 筛选，例如 8" value="{{ day }}">
+    <button type="submit">筛选</button>
+    <a href="/pushes" class="muted">清空</a>
+  </form>
+</div>
+<div class="timeline">
+  {% for push in pushes %}
+  <div class="timeline-item">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div>
+          <span class="badge">Day {{ '%02d'|format(push.day_number) }}</span>
+          <h3 style="margin:10px 0 6px 0;"><a href="/push/{{ push.id }}">{{ push.title }}</a></h3>
+        </div>
+        <div class="muted">{{ push.created_at }}</div>
+      </div>
+      <div class="preview">{{ push.preview }}{% if push.preview %}...{% endif %}</div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <h3>没有匹配结果</h3>
+    <p class="muted">你可以换个关键词，或清空筛选条件重试。</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+[Unit]
+Description=English Study Web Service
+After=network.target
+
+[Service]
+Type=simple
+User=openclaw
+WorkingDirectory=/home/openclaw/.openclaw/workspace/english_study_web
+ExecStart=/home/openclaw/.openclaw/workspace/english_study_web/.venv/bin/python /home/openclaw/.openclaw/workspace/english_study_web/app.py
+Restart=always
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
