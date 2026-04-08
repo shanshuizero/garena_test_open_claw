@@ -361,7 +361,7 @@ def export_days_index(days: list[tuple[int, str]]) -> None:
     for n, theme in days:
         cards.append(
             f'<div class="overview-card"><span class="badge">Day {n:02d}</span>'
-            f'<h3 class="card-title"><a href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
+            f'<h3 class="card-title"><a style="color:#d4d7dd;text-decoration:none;" href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
             f'<p class="card-copy">Anki 抽卡、晨读口语、朗读控制与上下日导航。</p></div>'
         )
     body = f'''
