@@ -74,7 +74,7 @@ def page_wrap(title: str, body: str) -> str:
       --blue:#0071e3;
       --blue-dark:#2997ff;
       --link:#5f86c5;
-      --link-soft:#7f9dcd;
+      --link-soft:#9aa7b8;
       --surface-dark:#272729;
       --surface-dark-2:#2a2a2d;
       --shadow:rgba(0,0,0,.22) 3px 5px 30px 0px;
