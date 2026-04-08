@@ -24,7 +24,7 @@
     .tab-panel.active { display:block; }
     .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
     .anki-scene { perspective: 1200px; }
-    .anki-card { position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }
+    .anki-card { position:relative; min-height:240px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }
     .anki-card.is-flipped { transform:rotateY(180deg); }
     .anki-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }
     .anki-front-face { background:linear-gradient(180deg,#17233f,#121a30); }
@@ -40,8 +40,11 @@
     .speak-btn { border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }
     .speak-btn:hover { background:#3b5d96; }
     .tool-row { display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }
+    .speed-chip { border:none; background:#243556; color:#d8e8ff; border-radius:999px; padding:7px 12px; cursor:pointer; }
+    .speed-chip.active { background:#4f8dff; color:#fff; }
   </style>
   <script>
+    let speechRate = 0.95;
     function switchTab(id, btn) {
       document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -52,6 +55,16 @@
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
     }
+    function setSpeechRate(rate, btn) {
+      speechRate = rate;
+      document.querySelectorAll('.speed-chip').forEach(el => el.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+    function stopSpeech() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
     function speakText(text) {
       if (!('speechSynthesis' in window)) {
         alert('当前浏览器不支持朗读功能');
@@ -60,7 +73,7 @@
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'en-US';
-      utter.rate = 0.95;
+      utter.rate = speechRate;
       window.speechSynthesis.speak(utter);
     }
     function speakMany(texts) {
@@ -75,7 +88,7 @@
         if (!text) return;
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'en-US';
-        utter.rate = 0.95;
+        utter.rate = speechRate;
         utter.onend = next;
         window.speechSynthesis.speak(utter);
       }
@@ -98,7 +111,7 @@
     <div class="grid">
       <div class="card"><h2>30 天学习计划</h2><p class="muted">按天学习，适合持续积累。</p><p><a href="./days.html">立即开始</a></p></div>
       <div class="card"><h2>翻面卡片</h2><p class="muted">点击卡片即可翻面，强化记忆。</p></div>
-      <div class="card"><h2>朗读功能</h2><p class="muted">支持 Anki 与晨读口语句子朗读。</p></div>
+      <div class="card"><h2>朗读控制</h2><p class="muted">支持语速切换与停止朗读。</p></div>
     </div>
     <div class="card">
       <h2>推荐从这些内容开始</h2>

@@ -83,7 +83,7 @@ def page_wrap(title: str, body: str) -> str:
     .tab-panel.active {{ display:block; }}
     .anki-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }}
     .anki-scene {{ perspective: 1200px; }}
-    .anki-card {{ position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }}
+    .anki-card {{ position:relative; min-height:240px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }}
     .anki-card.is-flipped {{ transform:rotateY(180deg); }}
     .anki-face {{ position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }}
     .anki-front-face {{ background:linear-gradient(180deg,#17233f,#121a30); }}
@@ -99,8 +99,11 @@ def page_wrap(title: str, body: str) -> str:
     .speak-btn {{ border:none; background:#2c4773; color:#fff; border-radius:10px; padding:8px 12px; cursor:pointer; font-weight:600; }}
     .speak-btn:hover {{ background:#3b5d96; }}
     .tool-row {{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 16px 0; }}
+    .speed-chip {{ border:none; background:#243556; color:#d8e8ff; border-radius:999px; padding:7px 12px; cursor:pointer; }}
+    .speed-chip.active {{ background:#4f8dff; color:#fff; }}
   </style>
   <script>
+    let speechRate = 0.95;
     function switchTab(id, btn) {{
       document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -111,6 +114,16 @@ def page_wrap(title: str, body: str) -> str:
       const el = document.getElementById(id);
       if (el) el.classList.toggle('is-flipped');
     }}
+    function setSpeechRate(rate, btn) {{
+      speechRate = rate;
+      document.querySelectorAll('.speed-chip').forEach(el => el.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }}
+    function stopSpeech() {{
+      if ('speechSynthesis' in window) {{
+        window.speechSynthesis.cancel();
+      }}
+    }}
     function speakText(text) {{
       if (!('speechSynthesis' in window)) {{
         alert('当前浏览器不支持朗读功能');
@@ -119,7 +132,7 @@ def page_wrap(title: str, body: str) -> str:
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'en-US';
-      utter.rate = 0.95;
+      utter.rate = speechRate;
       window.speechSynthesis.speak(utter);
     }}
     function speakMany(texts) {{
@@ -134,7 +147,7 @@ def page_wrap(title: str, body: str) -> str:
         if (!text) return;
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'en-US';
-        utter.rate = 0.95;
+        utter.rate = speechRate;
         utter.onend = next;
         window.speechSynthesis.speak(utter);
       }}
@@ -202,13 +215,22 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     next_link = f'./day-{n+1:02d}.html' if n < TOTAL_DAYS else './days.html'
     prev_label = f'← Day {n-1:02d}' if n > 1 else '← 返回计划'
     next_label = f'Day {n+1:02d} →' if n < TOTAL_DAYS else '返回计划 →'
+    speed_tools = '''
+    <div class="tool-row">
+      <button class="speed-chip" onclick="setSpeechRate(0.8, this)">0.8x</button>
+      <button class="speed-chip active" onclick="setSpeechRate(0.95, this)">1.0x</button>
+      <button class="speed-chip" onclick="setSpeechRate(1.2, this)">1.2x</button>
+      <button class="speak-btn" onclick="stopSpeech()">⏹ 停止朗读</button>
+    </div>
+    '''
     body = f'''
     <div class="hero">
       <span class="badge">Day {n:02d}</span>
       <h1>{html.escape(theme)}</h1>
-      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮，以及上下日导航。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换、朗读按钮、语速切换，以及上下日导航。</p>
     </div>
     <div class="card">
+      {speed_tools}
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('anki', this)">Anki 抽卡</button>
         <button class="tab-btn" onclick="switchTab('speaking', this)">晨读口语</button>
@@ -269,7 +291,7 @@ def export_index(days: list[tuple[int, str]]) -> None:
     <div class="grid">
       <div class="card"><h2>30 天学习计划</h2><p class="muted">按天学习，适合持续积累。</p><p><a href="./days.html">立即开始</a></p></div>
       <div class="card"><h2>翻面卡片</h2><p class="muted">点击卡片即可翻面，强化记忆。</p></div>
-      <div class="card"><h2>朗读功能</h2><p class="muted">支持 Anki 与晨读口语句子朗读。</p></div>
+      <div class="card"><h2>朗读控制</h2><p class="muted">支持语速切换与停止朗读。</p></div>
     </div>
     <div class="card">
       <h2>推荐从这些内容开始</h2>
@@ -290,7 +312,7 @@ def export_days_index(days: list[tuple[int, str]]) -> None:
     body = f'''
     <div class="hero">
       <h1>30 天学习计划</h1>
-      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>，并支持朗读与上下日跳转。</p>
+      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>，并支持朗读、语速切换与上下日跳转。</p>
     </div>
     <div class="grid">{''.join(cards)}</div>
     '''
