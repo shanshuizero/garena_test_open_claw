@@ -104,6 +104,8 @@ def page_wrap(title: str, body: str) -> str:
     .overview-card {{ background:var(--surface-dark); border-radius:12px; padding:22px; box-shadow:var(--shadow); }}
     .section-light .overview-card {{ background:#fff; color:var(--text-dark); }}
     .card-title {{ font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:21px; line-height:1.19; font-weight:700; letter-spacing:0.231px; margin:10px 0 8px; }}
+    .overview-card .card-title a {{ color:#d4d7dd; text-decoration:none; }}
+    .overview-card .card-title a:hover {{ color:#ffffff; text-decoration:none; }}
     .card-copy {{ font-size:14px; line-height:1.43; letter-spacing:-0.224px; color:inherit; opacity:.78; }}
     .badge {{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; line-height:1.33; letter-spacing:-0.12px; background:rgba(255,255,255,.12); color:#fff; }}
     .section-light .badge {{ background:#e8edf5; color:#1d1d1f; }}
