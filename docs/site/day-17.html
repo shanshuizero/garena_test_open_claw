@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Day 17｜数据库设计 / 索引 / 查询</title>
+  <style>
+    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; margin: 0; background:#0b1020; color:#e8ecf3; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .nav { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; background:#121a30; padding:16px; border-radius:14px; }
+    .card { background:#121a30; border-radius:16px; padding:20px; margin-bottom:18px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    a { color:#8cc8ff; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .muted { color:#9aacbf; }
+    .badge { display:inline-block; padding:4px 10px; border-radius:999px; background:#243556; color:#cfe4ff; font-size:12px; }
+    .content { line-height:1.75; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="./index.html">首页</a>
+      <a href="./days.html">30天计划</a>
+    </div>
+    
+        <div class="card">
+          <span class="badge">Day 17</span>
+          <h1>数据库设计 / 索引 / 查询</h1>
+        </div>
+        <div class="grid">
+          <div class="card content">
+            <h2>Anki 抽卡</h2>
+            <h1>Anki Day 17：数据库设计 / 索引 / 查询</h1>
+<h2>卡片格式</h2>
+<p>Front｜Back</p>
+<ul>
+<li><b>1. **Front**: read replica</b></li>
+</ul>
+<p>   **Back**: 只读副本｜Read replicas reduce the load on the primary database.｜提示：读写分离</p>
+<ul>
+<li><b>2. **Front**: denormalization</b></li>
+</ul>
+<p>   **Back**: 反规范化｜Denormalization can improve read performance.｜提示：换性能的 trade-off</p>
+<ul>
+<li><b>3. **Front**: query plan</b></li>
+</ul>
+<p>   **Back**: 查询计划｜The query plan shows that the index is not being used.｜提示：SQL 优化</p>
+<ul>
+<li><b>4. **Front**: composite index</b></li>
+</ul>
+<p>   **Back**: 联合索引｜A composite index may improve this query.｜提示：多列查询</p>
+<ul>
+<li><b>5. **Front**: covering index</b></li>
+</ul>
+<p>   **Back**: 覆盖索引｜A covering index avoids extra table lookups.｜提示：避免回表</p>
+          </div>
+          <div class="card content">
+            <h2>晨读口语</h2>
+            <h1>Speaking Day 17：数据库设计 / 索引 / 查询</h1>
+<h2>晨读短句</h2>
+<ul>
+<li><b>1. Read replicas reduce the load on the primary database.</b></li>
+</ul>
+<p>   - 中文：只读副本</p>
+<p>   - 提示：读写分离</p>
+<ul>
+<li><b>2. Denormalization can improve read performance.</b></li>
+</ul>
+<p>   - 中文：反规范化</p>
+<p>   - 提示：换性能的 trade-off</p>
+<ul>
+<li><b>3. The query plan shows that the index is not being used.</b></li>
+</ul>
+<p>   - 中文：查询计划</p>
+<p>   - 提示：SQL 优化</p>
+<ul>
+<li><b>4. A composite index may improve this query.</b></li>
+</ul>
+<p>   - 中文：联合索引</p>
+<p>   - 提示：多列查询</p>
+<ul>
+<li><b>5. A covering index avoids extra table lookups.</b></li>
+</ul>
+<p>   - 中文：覆盖索引</p>
+<p>   - 提示：避免回表</p>
+<h2>跟读提示</h2>
+<ul>
+<li>先慢读 2 遍</li>
+<li>再正常语速读 3 遍</li>
+<li>最后脱稿复述其中 2 句</li>
+</ul>
+          </div>
+        </div>
+        
+  </div>
+</body>
+</html>

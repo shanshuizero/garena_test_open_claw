@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>静态学习站首页</title>
+  <style>
+    body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; margin: 0; background:#0b1020; color:#e8ecf3; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .nav { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; background:#121a30; padding:16px; border-radius:14px; }
+    .card { background:#121a30; border-radius:16px; padding:20px; margin-bottom:18px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    a { color:#8cc8ff; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .muted { color:#9aacbf; }
+    .badge { display:inline-block; padding:4px 10px; border-radius:999px; background:#243556; color:#cfe4ff; font-size:12px; }
+    .content { line-height:1.75; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="./index.html">首页</a>
+      <a href="./days.html">30天计划</a>
+    </div>
+    
+    <div class="card">
+      <h1>Garena Test OpenClaw 静态学习站</h1>
+      <p class="muted">GitHub Pages 版本：展示 30 天英文学习计划与资料。</p>
+    </div>
+    <div class="card">
+      <h2>快速入口</h2>
+      <ul>
+        <li><a href="./days.html">浏览 30 天计划</a></li>
+        <li><a href="../README.md">查看仓库 README</a></li>
+      </ul>
+    </div>
+    <div class="grid"><div class="card"><span class="badge">Day 01</span><h3><a href="./day-01.html">通用开发核心 1</a></h3></div><div class="card"><span class="badge">Day 02</span><h3><a href="./day-02.html">通用开发核心 2</a></h3></div><div class="card"><span class="badge">Day 03</span><h3><a href="./day-03.html">前端基础 1</a></h3></div><div class="card"><span class="badge">Day 04</span><h3><a href="./day-04.html">前端基础 2</a></h3></div><div class="card"><span class="badge">Day 05</span><h3><a href="./day-05.html">后端基础 1</a></h3></div><div class="card"><span class="badge">Day 06</span><h3><a href="./day-06.html">后端基础 2</a></h3></div></div>
+    
+  </div>
+</body>
+</html>
