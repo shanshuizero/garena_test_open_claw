@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# SQLite / local runtime data
+*.db
+*.sqlite
+*.sqlite3
+/tmp/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# OpenClaw local/private runtime
+.openclaw/
+.clawhub/
+skills/
+
+# Workspace-local identity/bootstrap files
+BOOTSTRAP.md
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md
