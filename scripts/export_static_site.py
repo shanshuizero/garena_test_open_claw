@@ -128,7 +128,10 @@ def page_wrap(title: str, body: str) -> str:
     .anki-front-face {{ background:#f5f5f7; color:#1d1d1f; }}
     .anki-back-face {{ background:#272729; color:#fff; transform:rotateY(180deg); }}
     .anki-front {{ font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:28px; line-height:1.14; letter-spacing:0.196px; font-weight:400; margin-bottom:12px; }}
-    .anki-back {{ font-size:17px; line-height:1.47; letter-spacing:-0.374px; white-space:pre-line; }}
+    .anki-back {{ font-size:17px; line-height:1.47; letter-spacing:-0.374px; }}
+    .anki-back-meaning {{ font-size:17px; line-height:1.5; font-weight:600; color:#ffffff; margin-bottom:12px; }}
+    .anki-back-example {{ font-size:16px; line-height:1.55; color:rgba(255,255,255,.92); margin-bottom:10px; }}
+    .anki-back-translation {{ font-size:15px; line-height:1.55; color:rgba(255,255,255,.68); }}
     .flip-tip {{ margin-top:16px; font-size:12px; line-height:1.33; letter-spacing:-0.12px; opacity:.72; }}
     .speak-item {{ background:var(--surface-dark); color:#fff; border-radius:12px; padding:18px; box-shadow:var(--shadow); margin-bottom:16px; }}
     .speak-item b {{ font-size:21px; line-height:1.19; letter-spacing:0.231px; font-family:"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif; }}
@@ -210,7 +213,12 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     for idx, c in enumerate(cards, start=1):
         card_id = f'card-{n:02d}-{idx}'
         front = html.escape(c['front'])
-        back = html.escape(c['back'])
+        raw_back = c['back']
+        parts = [line.strip() for line in raw_back.splitlines() if line.strip()]
+        back_meaning = html.escape(parts[0]) if len(parts) > 0 else ''
+        back_example = html.escape(parts[1]) if len(parts) > 1 else ''
+        back_translation = html.escape(parts[2]) if len(parts) > 2 else ''
+        back = f'<div class="anki-back-meaning">{back_meaning}</div><div class="anki-back-example">{back_example}</div><div class="anki-back-translation">{back_translation}</div>'
         front_js = html.escape(c['front'], quote=True)
         back_js = html.escape(c['back'], quote=True)
         anki_html.append(
