@@ -23,12 +23,20 @@
     .tab-panel { display:none; }
     .tab-panel.active { display:block; }
     .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
-    .anki-card { background:linear-gradient(180deg,#17233f,#121a30); border:1px solid #2b426b; border-radius:18px; padding:18px; min-height:180px; }
+    .anki-scene { perspective: 1200px; }
+    .anki-card { position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }
+    .anki-card.is-flipped { transform:rotateY(180deg); }
+    .anki-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }
+    .anki-front-face { background:linear-gradient(180deg,#17233f,#121a30); }
+    .anki-back-face { background:linear-gradient(180deg,#1b3158,#14223c); transform:rotateY(180deg); }
     .anki-front { font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }
-    .anki-back { color:#cfe0f7; line-height:1.7; white-space:pre-line; }
+    .anki-back { color:#d9e6f9; line-height:1.75; white-space:pre-line; }
+    .flip-tip { margin-top:14px; color:#9fb5d6; font-size:13px; }
     .speak-item { border-left:3px solid #4f8dff; padding-left:14px; margin-bottom:16px; }
     .section-title { margin-top:0; }
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
+    .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -36,6 +44,10 @@
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       btn.classList.add('active');
+    }
+    function flipCard(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('is-flipped');
     }
   </script>
 </head>
@@ -50,7 +62,7 @@
     <div class="hero">
       <span class="badge">Day 26</span>
       <h1>书面表达：PR / Issue / 会议纪要</h1>
-      <p class="muted">支持卡片式 Anki 浏览与晨读口语切换。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -59,12 +71,17 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-card"><div class="anki-front">This PR refactors...</div><div class="anki-back">这个 PR 重构了……｜This PR refactors the notification module.｜提示：PR 描述</div></div><div class="anki-card"><div class="anki-front">The overall direction looks good to me.</div><div class="anki-back">整体方向我觉得不错｜The overall direction looks good to me.｜提示：PR 评论</div></div><div class="anki-card"><div class="anki-front">Thanks for reporting this issue.</div><div class="anki-back">感谢反馈这个问题｜Thanks for reporting this issue.｜提示：Issue 回复</div></div><div class="anki-card"><div class="anki-front">The root cause is currently under investigation.</div><div class="anki-back">根因仍在排查中｜The root cause is currently under investigation.｜提示：Issue 回复</div></div><div class="anki-card"><div class="anki-front">Key decisions</div><div class="anki-back">关键决定｜Key decisions: separate the write path from the delivery path.｜提示：会议纪要</div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-26-1" class="anki-card" onclick="flipCard('card-26-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">This PR refactors...</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">这个 PR 重构了……｜This PR refactors the notification module.｜提示：PR 描述</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-26-2" class="anki-card" onclick="flipCard('card-26-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">The overall direction looks good to me.</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">整体方向我觉得不错｜The overall direction looks good to me.｜提示：PR 评论</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-26-3" class="anki-card" onclick="flipCard('card-26-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">Thanks for reporting this issue.</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">感谢反馈这个问题｜Thanks for reporting this issue.｜提示：Issue 回复</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-26-4" class="anki-card" onclick="flipCard('card-26-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">The root cause is currently under investigation.</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">根因仍在排查中｜The root cause is currently under investigation.｜提示：Issue 回复</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-26-5" class="anki-card" onclick="flipCard('card-26-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">Key decisions</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">关键决定｜Key decisions: separate the write path from the delivery path.｜提示：会议纪要</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
         <div class="card speak-item"><div><b>This PR refactors the notification module.</b></div><div class="muted">中文：这个 PR 重构了……</div><div class="muted">提示：PR 描述</div></div><div class="card speak-item"><div><b>The overall direction looks good to me.</b></div><div class="muted">中文：整体方向我觉得不错</div><div class="muted">提示：PR 评论</div></div><div class="card speak-item"><div><b>Thanks for reporting this issue.</b></div><div class="muted">中文：感谢反馈这个问题</div><div class="muted">提示：Issue 回复</div></div><div class="card speak-item"><div><b>The root cause is currently under investigation.</b></div><div class="muted">中文：根因仍在排查中</div><div class="muted">提示：Issue 回复</div></div><div class="card speak-item"><div><b>Key decisions: separate the write path from the delivery path.</b></div><div class="muted">中文：关键决定</div><div class="muted">提示：会议纪要</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
+      </div>
+      <div class="pager">
+        <a href="./day-25.html">← Day 25</a>
+        <a href="./days.html">返回 30 天计划</a>
+        <a href="./day-27.html">Day 27 →</a>
       </div>
     </div>
     

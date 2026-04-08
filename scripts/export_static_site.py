@@ -8,6 +8,7 @@ ROOT = Path('/home/openclaw/.openclaw/workspace')
 SOURCE = ROOT / 'dev-english-study' / 'anki-30day'
 DOCS = ROOT / 'docs'
 SITE = DOCS / 'site'
+TOTAL_DAYS = 30
 
 
 def read_title(path: Path) -> str:
@@ -81,12 +82,20 @@ def page_wrap(title: str, body: str) -> str:
     .tab-panel {{ display:none; }}
     .tab-panel.active {{ display:block; }}
     .anki-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }}
-    .anki-card {{ background:linear-gradient(180deg,#17233f,#121a30); border:1px solid #2b426b; border-radius:18px; padding:18px; min-height:180px; }}
+    .anki-scene {{ perspective: 1200px; }}
+    .anki-card {{ position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }}
+    .anki-card.is-flipped {{ transform:rotateY(180deg); }}
+    .anki-face {{ position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }}
+    .anki-front-face {{ background:linear-gradient(180deg,#17233f,#121a30); }}
+    .anki-back-face {{ background:linear-gradient(180deg,#1b3158,#14223c); transform:rotateY(180deg); }}
     .anki-front {{ font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }}
-    .anki-back {{ color:#cfe0f7; line-height:1.7; white-space:pre-line; }}
+    .anki-back {{ color:#d9e6f9; line-height:1.75; white-space:pre-line; }}
+    .flip-tip {{ margin-top:14px; color:#9fb5d6; font-size:13px; }}
     .speak-item {{ border-left:3px solid #4f8dff; padding-left:14px; margin-bottom:16px; }}
     .section-title {{ margin-top:0; }}
     .footer-note {{ margin-top:16px; color:#97aac5; font-size:14px; }}
+    .pager {{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }}
+    .pager a {{ display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }}
   </style>
   <script>
     function switchTab(id, btn) {{
@@ -94,6 +103,10 @@ def page_wrap(title: str, body: str) -> str:
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       btn.classList.add('active');
+    }}
+    function flipCard(id) {{
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('is-flipped');
     }}
   </script>
 </head>
@@ -114,11 +127,20 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     cards = parse_anki(anki_md)
     speaking_items = parse_speaking(speaking_md)
     anki_html = ['<div class="anki-grid">']
-    for c in cards:
+    for idx, c in enumerate(cards, start=1):
+        card_id = f'card-{n:02d}-{idx}'
         anki_html.append(
-            f'<div class="anki-card">'
-            f'<div class="anki-front">{html.escape(c["front"])}</div>'
-            f'<div class="anki-back">{html.escape(c["back"])}</div>'
+            f'<div class="anki-scene">'
+            f'  <div id="{card_id}" class="anki-card" onclick="flipCard(\'{card_id}\')">'
+            f'    <div class="anki-face anki-front-face">'
+            f'      <div class="anki-front">{html.escape(c["front"])}</div>'
+            f'      <div class="flip-tip">点击卡片翻面</div>'
+            f'    </div>'
+            f'    <div class="anki-face anki-back-face">'
+            f'      <div class="anki-back">{html.escape(c["back"])}</div>'
+            f'      <div class="flip-tip">再次点击可翻回正面</div>'
+            f'    </div>'
+            f'  </div>'
             f'</div>'
         )
     anki_html.append('</div>')
@@ -131,11 +153,15 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
             f'<div class="muted">提示：{html.escape(item["tip"])}</div>'
             f'</div>'
         )
+    prev_link = f'./day-{n-1:02d}.html' if n > 1 else './days.html'
+    next_link = f'./day-{n+1:02d}.html' if n < TOTAL_DAYS else './days.html'
+    prev_label = f'← Day {n-1:02d}' if n > 1 else '← 返回计划'
+    next_label = f'Day {n+1:02d} →' if n < TOTAL_DAYS else '返回计划 →'
     body = f'''
     <div class="hero">
       <span class="badge">Day {n:02d}</span>
       <h1>{html.escape(theme)}</h1>
-      <p class="muted">支持卡片式 Anki 浏览与晨读口语切换。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -151,6 +177,11 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
         {''.join(speak_html)}
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
       </div>
+      <div class="pager">
+        <a href="{prev_link}">{prev_label}</a>
+        <a href="./days.html">返回 30 天计划</a>
+        <a href="{next_link}">{next_label}</a>
+      </div>
     </div>
     '''
     return page_wrap(f'Day {n:02d}｜{theme}', body)
@@ -158,7 +189,7 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
 
 def export_days() -> list[tuple[int, str]]:
     days: list[tuple[int, str]] = []
-    for n in range(1, 31):
+    for n in range(1, TOTAL_DAYS + 1):
         anki = SOURCE / f'anki-day-{n:02d}.md'
         speaking = SOURCE / f'speaking-day-{n:02d}.md'
         if not anki.exists() or not speaking.exists():
@@ -182,17 +213,17 @@ def export_index(days: list[tuple[int, str]]) -> None:
         cards.append(
             f'<div class="card"><span class="badge">Day {n:02d}</span>'
             f'<h3><a href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
-            f'<p class="muted">卡片式学习 + 晨读切换</p></div>'
+            f'<p class="muted">翻面卡片 + 晨读切换 + 上下日导航</p></div>'
         )
     body = f'''
     <div class="hero">
       <h1>Garena Test OpenClaw 学习站</h1>
-      <p>一个适合 GitHub Pages 展示的静态英文学习站，覆盖前后端开发英语、30 天学习计划、Anki 卡片与晨读口语。</p>
+      <p>一个适合 GitHub Pages 展示的静态英文学习站，覆盖前后端开发英语、30 天学习计划、翻面 Anki 卡片与晨读口语。</p>
     </div>
     <div class="grid">
       <div class="card"><h2>30 天学习计划</h2><p class="muted">按天学习，适合持续积累。</p><p><a href="./days.html">立即开始</a></p></div>
-      <div class="card"><h2>Anki 卡片</h2><p class="muted">真正卡片形式展示，更适合记忆。</p></div>
-      <div class="card"><h2>晨读口语</h2><p class="muted">支持切换查看，适合每日朗读训练。</p></div>
+      <div class="card"><h2>翻面卡片</h2><p class="muted">点击卡片即可翻面，强化记忆。</p></div>
+      <div class="card"><h2>晨读口语</h2><p class="muted">支持 tab 切换，适合每日朗读训练。</p></div>
     </div>
     <div class="card">
       <h2>推荐从这些内容开始</h2>
@@ -208,12 +239,12 @@ def export_days_index(days: list[tuple[int, str]]) -> None:
         cards.append(
             f'<div class="card"><span class="badge">Day {n:02d}</span>'
             f'<h3><a href="./day-{n:02d}.html">{html.escape(theme)}</a></h3>'
-            f'<p class="muted">Anki 卡片 + 晨读口语</p></div>'
+            f'<p class="muted">翻面卡片 + 晨读口语</p></div>'
         )
     body = f'''
     <div class="hero">
       <h1>30 天学习计划</h1>
-      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>。</p>
+      <p>点击任意一天进入学习页，可切换查看 <b>Anki 抽卡</b> 与 <b>晨读口语</b>，并支持上下日跳转。</p>
     </div>
     <div class="grid">{''.join(cards)}</div>
     '''

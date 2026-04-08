@@ -23,12 +23,20 @@
     .tab-panel { display:none; }
     .tab-panel.active { display:block; }
     .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
-    .anki-card { background:linear-gradient(180deg,#17233f,#121a30); border:1px solid #2b426b; border-radius:18px; padding:18px; min-height:180px; }
+    .anki-scene { perspective: 1200px; }
+    .anki-card { position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }
+    .anki-card.is-flipped { transform:rotateY(180deg); }
+    .anki-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }
+    .anki-front-face { background:linear-gradient(180deg,#17233f,#121a30); }
+    .anki-back-face { background:linear-gradient(180deg,#1b3158,#14223c); transform:rotateY(180deg); }
     .anki-front { font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }
-    .anki-back { color:#cfe0f7; line-height:1.7; white-space:pre-line; }
+    .anki-back { color:#d9e6f9; line-height:1.75; white-space:pre-line; }
+    .flip-tip { margin-top:14px; color:#9fb5d6; font-size:13px; }
     .speak-item { border-left:3px solid #4f8dff; padding-left:14px; margin-bottom:16px; }
     .section-title { margin-top:0; }
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
+    .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -36,6 +44,10 @@
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       btn.classList.add('active');
+    }
+    function flipCard(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('is-flipped');
     }
   </script>
 </head>
@@ -50,7 +62,7 @@
     <div class="hero">
       <span class="badge">Day 30</span>
       <h1>综合复习 2</h1>
-      <p class="muted">支持卡片式 Anki 浏览与晨读口语切换。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -59,12 +71,17 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-card"><div class="anki-front">Please correct me if I am wrong.</div><div class="anki-back">如果我理解错了请纠正我。｜Please correct me if I am wrong, but this field seems redundant.｜提示：礼貌表达</div></div><div class="anki-card"><div class="anki-front">I will follow up on this.</div><div class="anki-back">我会继续跟进这件事。｜I will follow up on this after the release.｜提示：结尾承诺</div></div><div class="anki-card"><div class="anki-front">We solved this by...</div><div class="anki-back">我们通过……解决了这个问题。｜We solved this by adding caching and optimizing queries.｜提示：项目表达</div></div><div class="anki-card"><div class="anki-front">The result was...</div><div class="anki-back">结果是……｜The result was a 40 percent reduction in response time.｜提示：结果表达</div></div><div class="anki-card"><div class="anki-front">From my experience...</div><div class="anki-back">根据我的经验……｜From my experience, clear API contracts reduce communication costs.｜提示：观点表达</div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-30-1" class="anki-card" onclick="flipCard('card-30-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">Please correct me if I am wrong.</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">如果我理解错了请纠正我。｜Please correct me if I am wrong, but this field seems redundant.｜提示：礼貌表达</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-30-2" class="anki-card" onclick="flipCard('card-30-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">I will follow up on this.</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">我会继续跟进这件事。｜I will follow up on this after the release.｜提示：结尾承诺</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-30-3" class="anki-card" onclick="flipCard('card-30-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">We solved this by...</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">我们通过……解决了这个问题。｜We solved this by adding caching and optimizing queries.｜提示：项目表达</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-30-4" class="anki-card" onclick="flipCard('card-30-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">The result was...</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">结果是……｜The result was a 40 percent reduction in response time.｜提示：结果表达</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-30-5" class="anki-card" onclick="flipCard('card-30-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">From my experience...</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">根据我的经验……｜From my experience, clear API contracts reduce communication costs.｜提示：观点表达</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
         <div class="card speak-item"><div><b>Please correct me if I am wrong, but this field seems redundant.</b></div><div class="muted">中文：如果我理解错了请纠正我。</div><div class="muted">提示：礼貌表达</div></div><div class="card speak-item"><div><b>I will follow up on this after the release.</b></div><div class="muted">中文：我会继续跟进这件事。</div><div class="muted">提示：结尾承诺</div></div><div class="card speak-item"><div><b>We solved this by adding caching and optimizing queries.</b></div><div class="muted">中文：我们通过……解决了这个问题。</div><div class="muted">提示：项目表达</div></div><div class="card speak-item"><div><b>The result was a 40 percent reduction in response time.</b></div><div class="muted">中文：结果是……</div><div class="muted">提示：结果表达</div></div><div class="card speak-item"><div><b>From my experience, clear API contracts reduce communication costs.</b></div><div class="muted">中文：根据我的经验……</div><div class="muted">提示：观点表达</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
+      </div>
+      <div class="pager">
+        <a href="./day-29.html">← Day 29</a>
+        <a href="./days.html">返回 30 天计划</a>
+        <a href="./days.html">返回计划 →</a>
       </div>
     </div>
     

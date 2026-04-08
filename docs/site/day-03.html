@@ -23,12 +23,20 @@
     .tab-panel { display:none; }
     .tab-panel.active { display:block; }
     .anki-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
-    .anki-card { background:linear-gradient(180deg,#17233f,#121a30); border:1px solid #2b426b; border-radius:18px; padding:18px; min-height:180px; }
+    .anki-scene { perspective: 1200px; }
+    .anki-card { position:relative; min-height:220px; cursor:pointer; transform-style:preserve-3d; transition:transform .6s; }
+    .anki-card.is-flipped { transform:rotateY(180deg); }
+    .anki-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; padding:18px; box-sizing:border-box; border:1px solid #2b426b; box-shadow:0 8px 20px rgba(0,0,0,.18); }
+    .anki-front-face { background:linear-gradient(180deg,#17233f,#121a30); }
+    .anki-back-face { background:linear-gradient(180deg,#1b3158,#14223c); transform:rotateY(180deg); }
     .anki-front { font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }
-    .anki-back { color:#cfe0f7; line-height:1.7; white-space:pre-line; }
+    .anki-back { color:#d9e6f9; line-height:1.75; white-space:pre-line; }
+    .flip-tip { margin-top:14px; color:#9fb5d6; font-size:13px; }
     .speak-item { border-left:3px solid #4f8dff; padding-left:14px; margin-bottom:16px; }
     .section-title { margin-top:0; }
     .footer-note { margin-top:16px; color:#97aac5; font-size:14px; }
+    .pager { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    .pager a { display:inline-block; background:#243556; padding:10px 16px; border-radius:12px; color:#dceaff; font-weight:600; }
   </style>
   <script>
     function switchTab(id, btn) {
@@ -36,6 +44,10 @@
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       btn.classList.add('active');
+    }
+    function flipCard(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('is-flipped');
     }
   </script>
 </head>
@@ -50,7 +62,7 @@
     <div class="hero">
       <span class="badge">Day 03</span>
       <h1>前端基础 1</h1>
-      <p class="muted">支持卡片式 Anki 浏览与晨读口语切换。</p>
+      <p class="muted">支持翻面卡片、Anki / 晨读 tab 切换，以及上下日导航。</p>
     </div>
     <div class="card">
       <div class="tabs">
@@ -59,12 +71,17 @@
       </div>
       <div id="anki" class="tab-panel active">
         <h2 class="section-title">Anki 抽卡</h2>
-        <div class="anki-grid"><div class="anki-card"><div class="anki-front">layout</div><div class="anki-back">布局｜The mobile layout breaks on small screens.｜提示：页面排布</div></div><div class="anki-card"><div class="anki-front">responsive</div><div class="anki-back">响应式的｜We need a responsive design for tablets.｜提示：适配不同尺寸</div></div><div class="anki-card"><div class="anki-front">viewport</div><div class="anki-back">视口｜The modal should stay centered in the viewport.｜提示：浏览器可视区域</div></div><div class="anki-card"><div class="anki-front">render</div><div class="anki-back">渲染｜The page takes too long to render.｜提示：页面显示过程</div></div><div class="anki-card"><div class="anki-front">bundle</div><div class="anki-back">打包产物｜The main bundle is too large.｜提示：前端工程化高频</div></div></div>
+        <div class="anki-grid"><div class="anki-scene">  <div id="card-03-1" class="anki-card" onclick="flipCard('card-03-1')">    <div class="anki-face anki-front-face">      <div class="anki-front">layout</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">布局｜The mobile layout breaks on small screens.｜提示：页面排布</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-03-2" class="anki-card" onclick="flipCard('card-03-2')">    <div class="anki-face anki-front-face">      <div class="anki-front">responsive</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">响应式的｜We need a responsive design for tablets.｜提示：适配不同尺寸</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-03-3" class="anki-card" onclick="flipCard('card-03-3')">    <div class="anki-face anki-front-face">      <div class="anki-front">viewport</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">视口｜The modal should stay centered in the viewport.｜提示：浏览器可视区域</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-03-4" class="anki-card" onclick="flipCard('card-03-4')">    <div class="anki-face anki-front-face">      <div class="anki-front">render</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">渲染｜The page takes too long to render.｜提示：页面显示过程</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div><div class="anki-scene">  <div id="card-03-5" class="anki-card" onclick="flipCard('card-03-5')">    <div class="anki-face anki-front-face">      <div class="anki-front">bundle</div>      <div class="flip-tip">点击卡片翻面</div>    </div>    <div class="anki-face anki-back-face">      <div class="anki-back">打包产物｜The main bundle is too large.｜提示：前端工程化高频</div>      <div class="flip-tip">再次点击可翻回正面</div>    </div>  </div></div></div>
       </div>
       <div id="speaking" class="tab-panel">
         <h2 class="section-title">晨读口语</h2>
         <div class="card speak-item"><div><b>The mobile layout breaks on small screens.</b></div><div class="muted">中文：布局</div><div class="muted">提示：页面排布</div></div><div class="card speak-item"><div><b>We need a responsive design for tablets.</b></div><div class="muted">中文：响应式的</div><div class="muted">提示：适配不同尺寸</div></div><div class="card speak-item"><div><b>The modal should stay centered in the viewport.</b></div><div class="muted">中文：视口</div><div class="muted">提示：浏览器可视区域</div></div><div class="card speak-item"><div><b>The page takes too long to render.</b></div><div class="muted">中文：渲染</div><div class="muted">提示：页面显示过程</div></div><div class="card speak-item"><div><b>The main bundle is too large.</b></div><div class="muted">中文：打包产物</div><div class="muted">提示：前端工程化高频</div></div>
         <div class="footer-note">建议：先慢读 2 遍，再正常语速读 3 遍，最后脱稿复述其中 2 句。</div>
+      </div>
+      <div class="pager">
+        <a href="./day-02.html">← Day 02</a>
+        <a href="./days.html">返回 30 天计划</a>
+        <a href="./day-04.html">Day 04 →</a>
       </div>
     </div>
     
