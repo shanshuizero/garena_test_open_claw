@@ -9,6 +9,7 @@ SOURCE = ROOT / 'dev-english-study' / 'anki-30day'
 DOCS = ROOT / 'docs'
 SITE = DOCS / 'site'
 TOTAL_DAYS = 30
+BACK_HINT_PREFIXES = ('提示:', '提示：', 'tip:', 'tip：')
 
 
 def read_title(path: Path) -> str:
@@ -54,6 +55,68 @@ def parse_speaking(md: str):
     if current:
         items.append(current)
     return items
+
+
+def normalize_hint(value: str) -> str:
+    text = value.strip()
+    for prefix in BACK_HINT_PREFIXES:
+        if text.lower().startswith(prefix.lower()):
+            return text[len(prefix):].strip()
+    return text
+
+
+def is_hint_segment(value: str) -> bool:
+    text = value.strip()
+    return any(text.lower().startswith(prefix.lower()) for prefix in BACK_HINT_PREFIXES)
+
+
+def split_inline_back(raw_back: str) -> tuple[str, str, str]:
+    segments = [segment.strip() for segment in raw_back.split('｜') if segment.strip()]
+    if not segments:
+        return '', '', ''
+
+    meaning = segments[0]
+    example = ''
+    translation = ''
+
+    if len(segments) == 1:
+        return meaning, example, translation
+
+    tail = segments[1:]
+    hints = [normalize_hint(segment) for segment in tail if is_hint_segment(segment)]
+    non_hints = [segment for segment in tail if not is_hint_segment(segment)]
+
+    if non_hints:
+        example = non_hints[0]
+        if len(non_hints) >= 2:
+            translation = non_hints[1]
+
+    if hints:
+        hint_text = '；'.join(hints)
+        translation = f'提示：{hint_text}' if not translation else f'{translation}｜提示：{hint_text}'
+
+    if not example and len(tail) >= 1 and not is_hint_segment(tail[0]):
+        example = tail[0]
+
+    return meaning, example, translation
+
+
+def parse_back_content(raw_back: str) -> tuple[str, str, str]:
+    stripped = raw_back.strip()
+    if not stripped:
+        return '', '', ''
+
+    non_empty_lines = [line.strip() for line in stripped.splitlines() if line.strip()]
+    if len(non_empty_lines) >= 2:
+        meaning = non_empty_lines[0]
+        example = non_empty_lines[1] if len(non_empty_lines) >= 2 else ''
+        translation = non_empty_lines[2] if len(non_empty_lines) >= 3 else ''
+        return meaning, example, translation
+
+    if '｜' in stripped:
+        return split_inline_back(stripped)
+
+    return stripped, '', ''
 
 
 def page_wrap(title: str, body: str) -> str:
@@ -213,12 +276,17 @@ def render_day_page(n: int, theme: str, anki_md: str, speaking_md: str) -> str:
     for idx, c in enumerate(cards, start=1):
         card_id = f'card-{n:02d}-{idx}'
         front = html.escape(c['front'])
-        raw_back = c['back']
-        parts = [line.strip() for line in raw_back.splitlines() if line.strip()]
-        back_meaning = html.escape(parts[0]) if len(parts) > 0 else ''
-        back_example = html.escape(parts[1]) if len(parts) > 1 else ''
-        back_translation = html.escape(parts[2]) if len(parts) > 2 else ''
-        back = f'<div class="anki-back-meaning">{back_meaning}</div><div class="anki-back-example">{back_example}</div><div class="anki-back-translation">{back_translation}</div>'
+        back_meaning_text, back_example_text, back_translation_text = parse_back_content(
+            c['back']
+        )
+        back_meaning = html.escape(back_meaning_text)
+        back_example = html.escape(back_example_text)
+        back_translation = html.escape(back_translation_text)
+        back = (
+            f'<div class="anki-back-meaning">{back_meaning}</div>'
+            f'<div class="anki-back-example">{back_example}</div>'
+            f'<div class="anki-back-translation">{back_translation}</div>'
+        )
         front_js = html.escape(c['front'], quote=True)
         back_js = html.escape(c['back'], quote=True)
         anki_html.append(
